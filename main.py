@@ -14,5 +14,11 @@ def create_app():
     # creating a generic db object that we can import into our models code
     # creating our database object! This allows us to use our ORM
     db.init_app(app)
-   
+
+    # import the controllers and activate the blueprints
+    from controllers import registerable_controllers
+
+    for controller in registerable_controllers:
+        app.register_blueprint(controller)
+
     return app
