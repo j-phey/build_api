@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow # Marshmallow works by creating a Marshmallow object that does the work of generating schemas
+from flask_bcrypt import Bcrypt # allows generating objects that will allow authenticated requests by hashing the password
+from flask_jwt_extended import JWTManager  # generates and manages the token
 
 db = SQLAlchemy()
 app = Flask(__name__)
@@ -11,8 +13,12 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://db_dev:123456@loc
 
 #create the database object
 db = SQLAlchemy(app)
-# That creates the Marshmallow object
+# Creates the Marshmallow object
 ma = Marshmallow()
+# Creates the Bycrypt object
+bcrypt = Bcrypt()
+# Creates the JWTManager object
+jwt = JWTManager()
 
 # class Card(db.Model):
 #     # define the table name for the db
@@ -48,6 +54,10 @@ def create_app():
 
     # creating our marshmallow object! This allows us to use schemas
     ma.init_app(app)
+
+    #creating the jwt and bcrypt objects! this allows us to use authentication
+    bcrypt.init_app(app)
+    jwt.init_app(app)
 
     # import the controllers and activate the blueprints
     from controllers import registerable_controllers
