@@ -18,6 +18,23 @@ def create_db():
 
 @db_commands .cli.command("seed")
 def seed_db():
+
+    #Create the users first. Create users before cards as user id is needed in card model.
+    admin_user = User(
+        email = "admin@email.com",
+        password = bcrypt.generate_password_hash("password123").decode("utf-8"),
+        admin = True
+    )
+    db.session.add(admin_user)
+
+    user1 = User(
+        email = "user1@email.com",
+        password = bcrypt.generate_password_hash("123456").decode("utf-8")
+    )
+    db.session.add(user1)
+    # This extra commit will end the transaction and generate the ids for the user
+    db.session.commit()
+
     # create the card object
     card1 = Card(
         # set the attributes, not the id, SQLAlchemy will manage that for us
@@ -25,7 +42,8 @@ def seed_db():
         description = "Stage 1, creating the database",
         status = "To Do",
         priority = "High",
-        date = date.today()
+        date = date.today(),
+        user_id = user1.id
     )
     # Add the object as a new row to the table
     db.session.add(card1)
@@ -36,27 +54,16 @@ def seed_db():
         description = "Stage 2, integrate both modules in the project",
         status = "Ongoing",
         priority = "High",
-        date = date.today()
+        date = date.today(),
+        # it also can be done this way
+        user = user1
     )
     # Add the object as a new row to the table
     db.session.add(card2)
 
-
-    admin_user = User(
-        email = "admin@email.com",
-        password = bcrypt.generate_password_hash("123456").decode("utf-8"),
-        admin = True
-    )
-    db.session.add(admin_user)
-
-    user1 = User(
-        email = "user1@email.com",
-        password = bcrypt.generate_password_hash("123456").decode("utf-8")
-    )
-    db.session.add(user1)
     # commit the changes
     db.session.commit()
-    print("Table seeded") 
+    print("Table seeded")
 
 @db_commands .cli.command("drop")
 def drop_db():

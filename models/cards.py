@@ -11,3 +11,10 @@ class Card(db.Model):
     date = db.Column(db.Date())
     status = db.Column(db.String())
     priority = db.Column(db.String())
+    # Add the user_id column as a foreign key in the Card model
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False) # nullable=False - card can't exist without an author
+    # Establish the relationship with users model
+    user = db.relationship(
+        "User",
+        back_populates="cards"
+    )
