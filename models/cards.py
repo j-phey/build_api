@@ -18,3 +18,9 @@ class Card(db.Model):
         "User",
         back_populates="cards"
     )
+    # Establish the relationship with comments model
+    comments = db.relationship(
+        "Comment",
+        back_populates="card",
+        cascade="all, delete"
+    )

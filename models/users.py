@@ -13,3 +13,9 @@ class User(db.Model):
         back_populates="user",
         cascade="all, delete"
     )
+    # Establish the relationship with comments model
+    comments = db.relationship(
+        "Comment",
+        back_populates="user",
+        cascade="all, delete"
+    )
