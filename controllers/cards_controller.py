@@ -93,8 +93,6 @@ def update_card(id):
     #return the card in the response
     return jsonify(card_schema.dump(card))
 
-
-
 # Finally, we round out our CRUD resource with a DELETE card method 
 @cards.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
@@ -121,3 +119,21 @@ def delete_card(id):
     db.session.commit()
     #return the card in the response
     return jsonify(card_schema.dump(card))
+
+# Search / Filter card 
+
+@cards.route("/search", methods=["GET"])
+def search_cards():
+    # create an empty list in case the query string is not valid
+    cards_list = []
+
+    if request.args.get('priority'):
+        stmt = db.select(Card).filter_by(priority= request.args.get('priority'))
+        cards_list = db.session.scalars(stmt)
+    elif request.args.get('status'):
+        stmt = db.select(Card).filter_by(status= request.args.get('status'))
+        cards_list = db.session.scalars(stmt)
+
+    result = cards_schema.dump(cards_list)
+    # return the data in JSON format
+    return jsonify(result)
