@@ -3,6 +3,7 @@ from main import db
 from models.cards import Card
 from models.users import User
 from schemas.card_schema import card_schema, cards_schema
+from schemas.user_schema import user_schema, users_schema
 from datetime import date
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -31,7 +32,6 @@ def get_card(id):
     result = card_schema.dump(card)
     # return the data in JSON format
     return jsonify(result)
-
 
 # The create card POST route endpoint
 @cards.route("/", methods=["POST"])
@@ -125,6 +125,8 @@ def delete_card(id):
     #return the card in the response
     return jsonify(card_schema.dump(card))
 
+# -- OTHER ROUTES --
+
 # Search / Filter card 
 
 @cards.route("/search", methods=["GET"])
@@ -140,5 +142,16 @@ def search_cards():
         cards_list = db.session.scalars(stmt)
 
     result = cards_schema.dump(cards_list)
+    # return the data in JSON format
+    return jsonify(result)
+
+# gets users information 
+@cards.route("/users", methods=["GET"])
+def get_users():
+    # get all the users from the database table
+    stmt = db.select(User)
+    users_list = db.session.scalars(stmt)
+    # Convert the users from the database into a JSON format and store them in result
+    result = users_schema.dump(users_list)
     # return the data in JSON format
     return jsonify(result)

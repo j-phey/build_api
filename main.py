@@ -47,6 +47,8 @@ def create_app():
 
     # configuring our app:
     app.config.from_object("config.app_config")
+    # show the columns in the right order instead of alphabetically
+    app.json.sort_keys = False
 
     # creating our database object! This allows us to use our ORM
     db.init_app(app)
