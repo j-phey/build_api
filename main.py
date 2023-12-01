@@ -7,7 +7,6 @@ from flask_jwt_extended import JWTManager  # generates and manages the token
 db = SQLAlchemy()
 app = Flask(__name__)
 
-app = Flask(__name__)
 # set the database URI via SQLAlchemy, 
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://db_dev:123456@localhost:5432/trello_clone_db"
 
@@ -58,6 +57,10 @@ def create_app():
     #creating the jwt and bcrypt objects! this allows us to use authentication
     bcrypt.init_app(app)
     jwt.init_app(app)
+
+    # register this blueprint on app in main.py.
+    from commands import db_commands
+    app.register_blueprint(db_commands)
 
     # import the controllers and activate the blueprints
     from controllers import registerable_controllers
