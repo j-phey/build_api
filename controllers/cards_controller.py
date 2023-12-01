@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 cards = Blueprint('cards', __name__, url_prefix="/cards")
 
-# The GET routes endpoint
+# The GET all cards route endpoint
 @cards.route("/", methods=["GET"])
 def get_cards():
     # get all the cards from the database table
@@ -19,7 +19,21 @@ def get_cards():
     # return the data in JSON format
     return jsonify(result)
 
-# The POST route endpoint
+# The GET a single card route endpoint - /cards/<id>
+@cards.route("/<int:id>/", methods=["GET"])
+def get_card(id):
+    stmt = db.select(Card).filter_by(id=id)
+    card = db.session.scalar(stmt)
+    #return an error if the card doesn't exist
+    if not card:
+        return abort(400, description= "Card does not exist")
+    # Convert the cards from the database into a JSON format and store them in result
+    result = card_schema.dump(card)
+    # return the data in JSON format
+    return jsonify(result)
+
+
+# The create card POST route endpoint
 @cards.route("/", methods=["POST"])
 @jwt_required()
 def create_card():
@@ -40,7 +54,7 @@ def create_card():
     return jsonify(card_schema.dump(new_card))
 
 
-# Finally, we round out our CRUD resource with a DELETE method
+# Finally, we round out our CRUD resource with a DELETE card method 
 @cards.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
 def delete_card(id):
