@@ -9,6 +9,7 @@ from schemas.comment_schema import comment_schema
 from datetime import date
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.exceptions import BadRequest
+from marshmallow.exceptions import ValidationError # Prevents generic 'ValidationError'
 
 cards = Blueprint('cards', __name__, url_prefix="/cards")
 
@@ -205,3 +206,7 @@ def key_error(e):
 @cards.errorhandler(BadRequest)
 def default_error(e):
     return jsonify({'error': e.description}), 400 # Catches various things like when JSON response not received
+
+@cards.errorhandler(ValidationError) # Prevents generic ValidationErrors
+def validation_error(e):
+    return jsonify(e.messages), 400 # 'messages' is a dictionary containing info about validation errors. We then jsonify this.
