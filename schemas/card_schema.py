@@ -12,7 +12,7 @@ class CardSchema(ma.Schema):
     # Regexp - every character is either a letter (upper or lower case), a digit, or a space
     title = fields.String(required=True, validate=And(Length(min=1), Regexp('^[a-zA-Z0-9 ]+$'))) # Title is required, must be a string and not empty. 
     status = fields.String(required=True, validate=OneOf(VALID_STATUSES)) # OneOf above valid statuses
-    priority = fields.String(required=True, validate=OneOf(VALID_PRIORITIES)) # OneOf above valid priorities
+    priority = fields.String(load_default='Medium', validate=OneOf(VALID_PRIORITIES)) # OneOf above valid priorities. Priority can be empty, but default to 'Medium' if so
 
     class Meta:
         # show the columns in the right order instead of alphabetically
