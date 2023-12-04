@@ -7,8 +7,10 @@ class CardSchema(ma.Schema):
         # show the columns in the right order instead of alphabetically
         ordered = True
         # Fields to expose
-        fields = ("id", "title", "description", "date", "status", "priority", "user")
+        fields = ("id", "title", "description", "date", "status", "priority", "user", "comments")
     user =  fields.Nested("UserSchema", only=("email",)) # Don't display everything - only the email
+    # The final step is to modify the card schema so we include a list of comments
+    comments = fields.List(fields.Nested("CommentSchema"))
 
 #single card schema, when one card needs to be retrieved
 card_schema = CardSchema()

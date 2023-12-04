@@ -8,6 +8,7 @@ from schemas.user_schema import user_schema, users_schema
 from schemas.comment_schema import comment_schema
 from datetime import date
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from werkzeug.exceptions import BadRequest
 
 cards = Blueprint('cards', __name__, url_prefix="/cards")
 
@@ -194,3 +195,13 @@ def post_comment(id):
     db.session.commit()
     #return the card in the response
     return jsonify(card_schema.dump(card))
+
+# Error handler(s)
+
+@cards.errorhandler(KeyError)
+def key_error(e):
+    return jsonify({'error': f'The field {e} is required'}), 400 # Catches missing fields e.g. "The field 'title' is required"
+
+@cards.errorhandler(BadRequest)
+def default_error(e):
+    return jsonify({'error': e.description}), 400 # Catches various things like when JSON response not received
