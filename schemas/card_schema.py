@@ -1,6 +1,6 @@
 from main import ma
 from marshmallow import fields # 'fields' needed for nested fields in request.
-from marshmallow.validate import Length, OneOf
+from marshmallow.validate import Length, OneOf, Regexp, And
 
 # List of allowed values. Declared as tuples. Note the all-caps naming convention for Python constants.
 # We call OneOf and pass in the tuple containing the valid values. OneOf will raise a ValidationError if the incoming value is not in the tuple.
@@ -9,7 +9,8 @@ VALID_STATUSES = ('To Do', 'Done', 'Ongoing', 'Testing', 'Deployed')
 
 # create the Card Schema with Marshmallow, it will provide the serialization needed for converting the data into JSON
 class CardSchema(ma.Schema):
-    title = fields.String(required=True, validate=Length(min=1, error='Title cannot be blank')) #Title is required, must be a string and not empty
+    # Regexp - every character is either a letter (upper or lower case), a digit, or a space
+    title = fields.String(required=True, validate=And(Length(min=1), Regexp('^[a-zA-Z0-9 ]+$'))) # Title is required, must be a string and not empty. 
     status = fields.String(required=True, validate=OneOf(VALID_STATUSES)) # OneOf above valid statuses
     priority = fields.String(required=True, validate=OneOf(VALID_PRIORITIES)) # OneOf above valid priorities
 
